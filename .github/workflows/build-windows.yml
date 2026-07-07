@@ -18,15 +18,27 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Install and Upgrade Dependencies
+      - name: Install dependencies
         run: |
           cd simple_live_app
-          flutter pub upgrade flutter_inappwebview permission_handler
           flutter pub get
 
       - name: Enable Windows Build
         run: |
           flutter config --enable-windows-desktop
+
+      - name: Inject Fix for MSVC Deprecation Error
+        run: |
+          cd simple_live_app/windows/Runner
+          python3 -c "
+          with open('CMakeLists.txt', 'r') as f:
+              content = f.read()
+          fix_line = 'add_compile_definitions(_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)\n'
+          if fix_line not in content:
+              content = fix_line + content
+          with open('CMakeLists.txt', 'w') as f:
+              f.write(content)
+          "
 
       - name: Build Windows App
         run: |
@@ -44,7 +56,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          TAG_NAME="win-v${{ github.run_number }}"
+          TAG_NAME="win-v$(date -u +'%Y%m%d_%H%M')"
           gh release create "$TAG_NAME" \
             --title "自动编译Windows版 $TAG_NAME" \
             --notes "由 GitHub Actions 自动编译生成的 Windows 绿色版桌面程序，解压后运行即可。" \
