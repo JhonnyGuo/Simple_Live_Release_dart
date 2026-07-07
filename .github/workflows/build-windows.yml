@@ -40,7 +40,7 @@ jobs:
           
           Compress-Archive -Path "$buildDir\*" -DestinationPath $zipPath -Force
           
-          $tagName = "win-v$(Get-Date (Get-Date).ToUniversalTime() -Format 'yyyyMMdd-HHmm')"
+          $tagName = "win_v$(Get-Date (Get-Date).ToUniversalTime() -Format 'yyyyMMdd_HHmm')"
           
           gh release create "$tagName" `
             --title "自动编译Windows版 $tagName" `
