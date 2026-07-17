@@ -38,6 +38,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG_NAME="android_v$(date -u +'%Y%m%d_%H%M')"
+          mv simple_live_app/build/app/outputs/flutter-apk/app-release.apk simple_live_app/build/app/outputs/flutter-apk/simple_live_android.apk
           
           gh release create "$TAG_NAME" \
             --title "自动编译Android版本 $TAG_NAME" \
