@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -29,7 +29,7 @@ jobs:
         run: |
           sed -i 's/signingConfig = signingConfigs.getByName("release")/signingConfig = signingConfigs.getByName("debug")/g' android/app/build.gradle.kts
           sed -i 's/as String/.toString()/g' android/app/build.gradle.kts
-          
+
           flutter pub get
           flutter build apk --release --android-skip-build-dependency-validation
 
@@ -39,7 +39,7 @@ jobs:
         run: |
           TAG_NAME="android_v$(date -u +'%Y%m%d_%H%M')"
           mv simple_live_app/build/app/outputs/flutter-apk/app-release.apk simple_live_app/build/app/outputs/flutter-apk/simple_live_android.apk
-          
+
           gh release create "$TAG_NAME" \
             --title "自动编译Android版 $TAG_NAME" \
             --notes "由 GitHub Actions 自动编译生成" \
